@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roleta de Cassino</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1a202c; /* bg-gray-900 */
+            color: #e2e8f0; /* text-gray-300 */
+        }
+        .font-playfair {
+            font-family: 'Playfair Display', serif;
+        }
+        #wheel-container {
+            position: relative;
+            width: 350px;
+            height: 350px;
+        }
+        #wheel {
+            transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        #wheel-pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 30px solid #fefcbf; /* yellow-100 */
+        }
+        .bet-spot {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 0.375rem; /* rounded-md */
+            border: 2px solid #4a5568; /* border-gray-600 */
+        }
+        .bet-spot:hover {
+            transform: scale(1.05);
+            border-color: #fefcbf; /* yellow-100 */
+        }
+        .bet-spot.red { background-color: #c53030; /* red-700 */ }
+        .bet-spot.black { background-color: #2d3748; /* gray-800 */ }
+        .bet-spot.green { background-color: #2f855a; /* green-700 */ }
+        .bet-spot.active-bet {
+            box-shadow: 0 0 15px #fefcbf;
+            border-color: #fefcbf;
+        }
+        .chip {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #fefcbf;
+            color: #1a202c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            pointer-events: none;
+            opacity: 0.85;
+            transform: translate(-50%, -50%);
+        }
+        #message-box {
+            transition: opacity 0.5s, transform 0.5s;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-7xl mx-auto bg-gray-800 rounded-2xl shadow-2xl p-4 md:p-8">
+        <h1 class="font-playfair text-4xl md:text-5xl text-center text-yellow-200 mb-6">Roleta de Cassino</h1>
+
+        <!-- Main Game Area -->
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <!-- Left Side: Wheel and Controls -->
+            <div class="lg:w-1/3 flex flex-col items-center gap-6">
+                <!-- Wheel -->
+                <div id="wheel-container" class="mb-4">
+                    <div id="wheel-pointer"></div>
+                    <canvas id="wheel" width="350" height="350"></canvas>
+                </div>
+
+                <!-- Game Info -->
+                <div class="w-full bg-gray-900 p-4 rounded-lg text-center space-y-3">
+                    <div class="text-lg">Saldo: <span id="balance" class="font-bold text-green-400">R$1000.00</span></div>
+                    <div class="text-lg">Aposta Total: <span id="total-bet" class="font-bold text-yellow-400">R$0.00</span></div>
+                    <div class="text-lg">Último Número: <span id="result" class="font-bold text-xl text-white">-</span></div>
+                </div>
+
+                <!-- Controls -->
+                <div class="w-full space-y-4">
+                    <div class="flex items-center gap-2">
+                        <label for="bet-amount" class="text-lg">Valor:</label>
+                        <input type="number" id="bet-amount" value="10" min="1" class="w-full bg-gray-700 text-white p-2 rounded-md border-2 border-gray-600 focus:border-yellow-400 focus:outline-none">
+                    </div>
+                    <button id="spin-button" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg text-xl transition duration-300">Girar</button>
+                    <button id="clear-button" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg text-xl transition duration-300">Limpar Apostas</button>
+                </div>
+            </div>
+
+            <!-- Right Side: Betting Table -->
+            <div class="lg:w-2/3" id="betting-table">
+                <div class="grid grid-cols-12 gap-1 text-white text-sm md:text-base">
+                    <!-- Zero -->
+                    <div class="col-span-1 row-span-3 bet-spot green" data-bet-type="number" data-bet-value="0">0</div>
+                    
+                    <!-- Numbers Grid -->
+                    <div class="col-span-11 grid grid-cols-11 gap-1">
+                        <!-- Numbers will be injected here by JS -->
+                    </div>
+                    
+                    <!-- Column Bets -->
+                    <div class="col-span-11 grid grid-cols-11 gap-1 mt-1">
+                        <div class="col-span-11 grid grid-cols-3 gap-1">
+                           <div class="col-span-1 bet-spot" data-bet-type="column" data-bet-value="1">2 para 1</div>
+                           <div class="col-span-1 bet-spot" data-bet-type="column" data-bet-value="2">2 para 1</div>
+                           <div class="col-span-1 bet-spot" data-bet-type="column" data-bet-value="3">2 para 1</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-1 mt-1 text-white text-sm md:text-base">
+                    <!-- Dozen Bets -->
+                    <div class="col-span-1 bet-spot p-4" data-bet-type="dozen" data-bet-value="1">1º 12</div>
+                    <div class="col-span-1 bet-spot p-4" data-bet-type="dozen" data-bet-value="2">2º 12</div>
+                    <div class="col-span-1 bet-spot p-4" data-bet-type="dozen" data-bet-value="3">3º 12</div>
+                </div>
+
+                <div class="grid grid-cols-6 gap-1 mt-1 text-white text-sm md:text-base">
+                    <!-- Outside Bets -->
+                    <div class="col-span-1 bet-spot p-4" data-bet-type="range" data-bet-value="low">1-18</div>
+                    <div class="col-span-1 bet-spot p-4" data-bet-type="even" data-bet-value="even">PAR</div>
+                    <div class="col-span-1 bet-spot p-4 red" data-bet-type="color" data-bet-value="red"></div>
+                    <div class="col-span-1 bet-spot p-4 black" data-bet-type="color" data-bet-value="black"></div>
+                    <div class="col-span-1 bet-spot p-4" data-bet-type="odd" data-bet-value="odd">ÍMPAR</div>
+                    <div class="col-span-1 bet-spot p-4" data-bet-type="range" data-bet-value="high">19-36</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Message Box -->
+    <div id="message-box" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-900 border-4 p-8 rounded-2xl shadow-lg text-center opacity-0 pointer-events-none transform scale-90">
+        <h2 id="message-title" class="text-3xl font-bold mb-4"></h2>
+        <p id="message-text" class="text-lg"></p>
+        <button id="message-close" class="mt-6 bg-yellow-400 text-gray-900 font-bold py-2 px-6 rounded-lg">OK</button>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DOM Elements ---
+        const canvas = document.getElementById('wheel');
+        const ctx = canvas.getContext('2d');
+        const spinButton = document.getElementById('spin-button');
+        const clearButton = document.getElementById('clear-button');
+        const balanceEl = document.getElementById('balance');
+        const totalBetEl = document.getElementById('total-bet');
+        const resultEl = document.getElementById('result');
+        const betAmountInput = document.getElementById('bet-amount');
+        const bettingTable = document.getElementById('betting-table');
+        const messageBox = document.getElementById('message-box');
+        const messageTitle = document.getElementById('message-title');
+        const messageText = document.getElementById('message-text');
+        const messageClose = document.getElementById('message-close');
+
+        // --- Game Configuration ---
+        const numbers = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
+        const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+        const numSegments = numbers.length;
+        const anglePerSegment = (2 * Math.PI) / numSegments;
+        const radius = canvas.width / 2;
+
+        // --- Game State ---
+        let balance = 1000;
+        let totalBet = 0;
+        let bets = {}; // e.g., { "number_5": 50, "color_red": 100 }
+        let isSpinning = false;
+        let currentAngle = 0;
+
+        // --- Initialization ---
+        function initialize() {
+            drawRouletteWheel();
+            updateUI();
+            createNumberGrid();
+        }
+
+        // --- Drawing Functions ---
+        function drawRouletteWheel() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = 'bold 16px Roboto';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            for (let i = 0; i < numSegments; i++) {
+                const angle = i * anglePerSegment;
+                const number = numbers[i];
+
+                // Draw segment
+                ctx.beginPath();
+                ctx.moveTo(radius, radius);
+                ctx.arc(radius, radius, radius - 5, angle, angle + anglePerSegment);
+                ctx.closePath();
+
+                // Set color
+                if (number === 0) {
+                    ctx.fillStyle = '#2f855a'; // green-700
+                } else if (redNumbers.includes(number)) {
+                    ctx.fillStyle = '#c53030'; // red-700
+                } else {
+                    ctx.fillStyle = '#2d3748'; // gray-800
+                }
+                ctx.fill();
+                ctx.strokeStyle = '#a0aec0'; // gray-400
+                ctx.stroke();
+
+                // Draw number
+                ctx.save();
+                ctx.fillStyle = 'white';
+                const textAngle = angle + anglePerSegment / 2;
+                ctx.translate(radius + Math.cos(textAngle) * (radius - 30), radius + Math.sin(textAngle) * (radius - 30));
+                ctx.rotate(textAngle + Math.PI / 2);
+                ctx.fillText(number.toString(), 0, 0);
+                ctx.restore();
+            }
+        }
+        
+        function createNumberGrid() {
+            const container = bettingTable.querySelector('.col-span-11.grid');
+            for (let i = 1; i <= 36; i++) {
+                const numberDiv = document.createElement('div');
+                numberDiv.textContent = i;
+                numberDiv.classList.add('bet-spot', 'p-4');
+                numberDiv.dataset.betType = 'number';
+                numberDiv.dataset.betValue = i;
+                if (redNumbers.includes(i)) {
+                    numberDiv.classList.add('red');
+                } else {
+                    numberDiv.classList.add('black');
+                }
+                container.appendChild(numberDiv);
+            }
+        }
+
+        // --- UI and State Management ---
+        function updateUI() {
+            balanceEl.textContent = `R$${balance.toFixed(2)}`;
+            totalBetEl.textContent = `R$${totalBet.toFixed(2)}`;
+            
+            // Clear previous chips
+            document.querySelectorAll('.chip').forEach(chip => chip.remove());
+            
+            // Add new chips
+            for (const betKey in bets) {
+                const [type, value] = betKey.split('_');
+                const spot = document.querySelector(`.bet-spot[data-bet-type="${type}"][data-bet-value="${value}"]`);
+                if (spot) {
+                    spot.classList.add('active-bet');
+                    const chip = document.createElement('div');
+                    chip.classList.add('chip');
+                    chip.textContent = `R$${bets[betKey]}`;
+                    const rect = spot.getBoundingClientRect();
+                    const tableRect = bettingTable.getBoundingClientRect();
+                    chip.style.left = `${rect.left - tableRect.left + rect.width / 2}px`;
+                    chip.style.top = `${rect.top - tableRect.top + rect.height / 2}px`;
+                    bettingTable.appendChild(chip);
+                }
+            }
+        }
+
+        function showMessage(title, text, isWin) {
+            messageTitle.textContent = title;
+            messageText.innerHTML = text; // Use innerHTML to allow for bold tags
+            messageBox.style.borderColor = isWin ? '#48bb78' : '#f56565'; // green-500 or red-500
+            messageTitle.style.color = isWin ? '#68d391' : '#fc8181'; // green-400 or red-400
+            messageBox.classList.remove('opacity-0', 'pointer-events-none', 'scale-90');
+            messageBox.classList.add('opacity-100', 'scale-100');
+        }
+
+        function hideMessage() {
+            messageBox.classList.add('opacity-0', 'pointer-events-none', 'scale-90');
+            messageBox.classList.remove('opacity-100', 'scale-100');
+        }
+
+        // --- Betting Logic ---
+        function placeBet(type, value) {
+            if (isSpinning) {
+                alert("Aguarde a roleta parar para fazer novas apostas.");
+                return;
+            }
+
+            const amount = parseInt(betAmountInput.value);
+            if (isNaN(amount) || amount <= 0) {
+                alert("Por favor, insira um valor de aposta válido.");
+                return;
+            }
+            if (amount > balance) {
+                alert("Saldo insuficiente para esta aposta.");
+                return;
+            }
+
+            const betKey = `${type}_${value}`;
+            bets[betKey] = (bets[betKey] || 0) + amount;
+            totalBet += amount;
+            balance -= amount;
+
+            updateUI();
+        }
+
+        function clearBets() {
+            if (isSpinning) return;
+            balance += totalBet;
+            totalBet = 0;
+            bets = {};
+            document.querySelectorAll('.bet-spot.active-bet').forEach(el => el.classList.remove('active-bet'));
+            updateUI();
+        }
+
+        // --- Game Logic ---
+        function spinWheel() {
+            if (isSpinning) return;
+            if (totalBet === 0) {
+                alert("Faça uma aposta antes de girar!");
+                return;
+            }
+
+            isSpinning = true;
+            spinButton.disabled = true;
+            clearButton.disabled = true;
+            bettingTable.style.pointerEvents = 'none';
+            resultEl.textContent = '...';
+
+            const randomSpins = Math.floor(Math.random() * 5) + 5; // 5 to 9 full rotations
+            const randomStopAngle = Math.random() * 2 * Math.PI;
+            const totalRotation = (randomSpins * 2 * Math.PI) + randomStopAngle;
+
+            canvas.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+            canvas.style.transform = `rotate(${totalRotation}rad)`;
+            currentAngle = totalRotation % (2 * Math.PI);
+
+            setTimeout(finishSpin, 5000);
+        }
+
+        function finishSpin() {
+            const winningSegmentIndex = Math.floor(numSegments - (currentAngle / anglePerSegment) - 0.5 + numSegments) % numSegments;
+            const winningNumber = numbers[winningSegmentIndex];
+            
+            resultEl.textContent = winningNumber;
+            resultEl.style.color = winningNumber === 0 ? '#68d391' : redNumbers.includes(winningNumber) ? '#fc8181' : 'white';
+
+            calculateWinnings(winningNumber);
+            
+            // Reset for next round
+            isSpinning = false;
+            spinButton.disabled = false;
+            clearButton.disabled = false;
+            bettingTable.style.pointerEvents = 'auto';
+            
+            // Clear bets after result
+            totalBet = 0;
+            bets = {};
+            document.querySelectorAll('.bet-spot.active-bet').forEach(el => el.classList.remove('active-bet'));
+            updateUI();
+        }
+
+        function calculateWinnings(winningNumber) {
+            let winnings = 0;
+            const isRed = redNumbers.includes(winningNumber);
+            const isBlack = winningNumber !== 0 && !isRed;
+            const isEven = winningNumber !== 0 && winningNumber % 2 === 0;
+            const isOdd = winningNumber !== 0 && winningNumber % 2 !== 0;
+
+            for (const betKey in bets) {
+                const [type, value] = betKey.split('_');
+                const betAmount = bets[betKey];
+
+                if (type === 'number' && parseInt(value) === winningNumber) {
+                    winnings += betAmount * 36; // Payout 35:1 + original bet
+                }
+                if (type === 'color') {
+                    if (value === 'red' && isRed) winnings += betAmount * 2;
+                    if (value === 'black' && isBlack) winnings += betAmount * 2;
+                }
+                if (type === 'even' && value === 'even' && isEven) {
+                    winnings += betAmount * 2;
+                }
+                if (type === 'odd' && value === 'odd' && isOdd) {
+                    winnings += betAmount * 2;
+                }
+                if (type === 'range') {
+                    if (value === 'low' && winningNumber >= 1 && winningNumber <= 18) winnings += betAmount * 2;
+                    if (value === 'high' && winningNumber >= 19 && winningNumber <= 36) winnings += betAmount * 2;
+                }
+                if (type === 'dozen') {
+                    if (value === '1' && winningNumber >= 1 && winningNumber <= 12) winnings += betAmount * 3;
+                    if (value === '2' && winningNumber >= 13 && winningNumber <= 24) winnings += betAmount * 3;
+                    if (value === '3' && winningNumber >= 25 && winningNumber <= 36) winnings += betAmount * 3;
+                }
+                if (type === 'column') {
+                    const col1 = [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34];
+                    const col2 = [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35];
+                    const col3 = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36];
+                    if (value === '1' && col1.includes(winningNumber)) winnings += betAmount * 3;
+                    if (value === '2' && col2.includes(winningNumber)) winnings += betAmount * 3;
+                    if (value === '3' && col3.includes(winningNumber)) winnings += betAmount * 3;
+                }
+            }
+
+            if (winnings > 0) {
+                balance += winnings;
+                showMessage("Você Ganhou!", `Parabéns! O número foi <b>${winningNumber}</b>.<br>Você ganhou <b>R$${winnings.toFixed(2)}</b>.`, true);
+            } else {
+                showMessage("Você Perdeu", `O número foi <b>${winningNumber}</b>.<br>Mais sorte na próxima vez!`, false);
+            }
+        }
+
+        // --- Event Listeners ---
+        spinButton.addEventListener('click', spinWheel);
+        clearButton.addEventListener('click', clearBets);
+        bettingTable.addEventListener('click', (e) => {
+            const spot = e.target.closest('.bet-spot');
+            if (spot) {
+                const { betType, betValue } = spot.dataset;
+                placeBet(betType, betValue);
+            }
+        });
+        messageClose.addEventListener('click', hideMessage);
+
+        // --- Start the game ---
+        initialize();
+    });
+    </script>
+</body>
+</html>
