@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airline Manager Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="main-menu-modal" class="modal" style="display: flex;">
+        <div class="modal-content">
+            <h2>Airline Manager Pro</h2>
+            <p>Bem-vindo de volta! O que você gostaria de fazer?</p>
+            <div class="main-menu-buttons">
+                <button id="continue-game-btn" class="btn btn-save" disabled><i class="fas fa-play"></i> Continuar Jogo</button>
+                <button id="new-game-btn" class="btn"><i class="fas fa-plus"></i> Novo Jogo</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="new-game-modal" class="modal">
+        <div class="modal-content">
+            <h2>Iniciando uma Nova Carreira</h2>
+            <p>Por favor, escolha um nome para a sua nova companhia aérea.</p>
+            <input type="text" id="company-name-input" placeholder="Ex: AeroBrasil, FlyHigh, etc." maxlength="20">
+            <button id="start-game-btn" class="btn">Fundar Companhia</button>
+        </div>
+    </div>
+
+    <div class="game-wrapper" style="visibility: hidden;">
+        <nav class="side-navbar">
+            <div class="navbar-header">
+                <span id="company-name-display" class="logo-text">AMP</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#" class="nav-link active" data-page="overview"><i class="fas fa-tachometer-alt nav-icon"></i><span class="nav-text">Visão Geral</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="fleet"><i class="fas fa-plane-departure nav-icon"></i><span class="nav-text">Frota</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="operations"><i class="fas fa-globe-americas nav-icon"></i><span class="nav-text">Operações</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="staff"><i class="fas fa-users nav-icon"></i><span class="nav-text">Pessoal</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="upgrades"><i class="fas fa-flask nav-icon"></i><span class="nav-text">Desenvolvimento</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="alliances"><i class="fas fa-handshake nav-icon"></i><span class="nav-text">Alianças</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="finance"><i class="fas fa-wallet nav-icon"></i><span class="nav-text">Finanças</span></a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header>
+                <div class="header-top-row">
+                    <h1>Painel de Controle</h1>
+                    <div id="news-ticker" class="news-ticker">
+                        <span id="news-ticker-text">As ações da Boeing sobem após anúncio de novo modelo...</span>
+                    </div>
+                </div>
+                <div class="dashboard">
+                    <div id="status-money" class="status-box"><strong>💰 Dinheiro:</strong> <span id="money-display">$350,000</span></div>
+                    <div id="status-reputation" class="status-box"><strong>⭐ Reputação:</strong> <span id="reputation-display">100</span></div>
+                    <div id="status-time" class="status-box"><strong>🗓️ Tempo:</strong> <span id="time-display">Dia 1, 00:00</span></div>
+                </div>
+            </header>
+            
+            <div class="page-container">
+                <section id="overview-page" class="page active">
+                    <h2><i class="fas fa-tachometer-alt icon"></i>Visão Geral da Companhia</h2>
+                    <div class="overview-grid">
+                        <div class="game-panel">
+                            <h3><i class="fas fa-cog icon"></i>Ações do Jogo</h3>
+                            <div class="game-actions">
+                                <button id="save-game-btn" class="btn btn-save"><i class="fas fa-save"></i> Salvar Progresso</button>
+                                <button id="restart-game-btn" class="btn btn-restart"><i class="fas fa-power-off"></i> Reiniciar Jogo</button>
+                            </div>
+                        </div>
+                        <div class="game-panel">
+                            <h3><i class="fas fa-bullhorn icon"></i>Eventos de Mercado Atuais</h3>
+                            <div id="market-events-list" class="card-container"></div>
+                        </div>
+                        <div class="game-panel full-width">
+                            <h3><i class="fas fa-plane icon"></i>Voos Ativos</h3>
+                            <div id="overview-active-flights" class="card-container"></div>
+                        </div>
+                        <div class="game-panel full-width">
+                            <h3><i class="fas fa-history icon"></i>Log de Eventos Recentes</h3>
+                            <div id="log-messages"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="fleet-page" class="page">
+                    <h2><i class="fas fa-plane-departure icon"></i>Frota & Mercado</h2>
+                    <div class="game-panel">
+                        <div class="tabs">
+                            <button class="tab-button active" data-tab="fleet-content">Minha Frota</button>
+                            <button class="tab-button" data-tab="market-content">Comprar Novos</button>
+                            <button class="tab-button" data-tab="used-market-content">Comprar Usados</button>
+                        </div>
+                        <div id="fleet-content" class="tab-content active"><div id="fleet-list" class="card-container"></div></div>
+                        <div id="market-content" class="tab-content"><div id="market-list" class="card-container"></div></div>
+                        <div id="used-market-content" class="tab-content"><div id="used-market-list" class="card-container"></div></div>
+                    </div>
+                </section>
+
+                <section id="operations-page" class="page">
+                    <h2><i class="fas fa-globe-americas icon"></i>Operações Globais</h2>
+                    <div class="operations-layout">
+                        <div class="game-panel">
+                            <div class="tabs">
+                                <button class="tab-button active" data-tab="routes-content">Rotas Aéreas</button>
+                                <button class="tab-button" data-tab="airports-content">Aeroportos (Slots)</button>
+                                <button class="tab-button" data-tab="hubs-content">Meus Hubs</button>
+                                <button class="tab-button" data-tab="history-content">Histórico de Voos</button>
+                            </div>
+                            <div id="routes-content" class="tab-content active"><div id="routes-list" class="card-container"></div></div>
+                            <div id="airports-content" class="tab-content"><div id="airports-list" class="card-container"></div></div>
+                            <div id="hubs-content" class="tab-content"><div id="hubs-list" class="card-container"></div></div>
+                            <div id="history-content" class="tab-content"><div id="flight-history-table" class="table-container"></div></div>
+                        </div>
+                        <div id="competitor-info-panel" class="game-panel">
+                            <h3><i class="fas fa-building"></i>Concorrência</h3>
+                            <div id="competitor-list" class="card-container"></div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="staff-page" class="page">
+                    <h2><i class="fas fa-users icon"></i>Recursos Humanos</h2>
+                    <div class="game-panel">
+                        <div id="staff-summary" class="staff-summary"></div>
+                        <div class="tabs"><button class="tab-button active" data-tab="my-staff-content">Minha Equipe</button><button class="tab-button" data-tab="hire-staff-content">Contratar</button></div>
+                        <div id="my-staff-content" class="tab-content active"><div id="my-staff-list" class="card-container"></div></div>
+                        <div id="hire-staff-content" class="tab-content"><div id="hire-staff-list" class="card-container"></div></div>
+                    </div>
+                </section>
+
+                <section id="upgrades-page" class="page">
+                    <h2><i class="fas fa-flask icon"></i>Desenvolvimento da Companhia</h2>
+                    <div class="game-panel">
+                        <div id="upgrades-list" class="card-container-grid"></div>
+                    </div>
+                </section>
+
+                <section id="alliances-page" class="page">
+                    <h2><i class="fas fa-handshake icon"></i>Alianças Aéreas</h2>
+                    <div id="alliance-info"></div>
+                    <div class="game-panel">
+                         <div id="alliances-list" class="card-container-grid"></div>
+                    </div>
+                </section>
+
+                <section id="finance-page" class="page">
+                    <h2><i class="fas fa-wallet icon"></i>Finanças</h2>
+                    <div class="game-panel">
+                        <button id="open-finance-report-btn" class="header-btn">📊 Abrir Relatório Detalhado</button>
+                        <div class="tabs"><button class="tab-button active" data-tab="bank-content">🏦 Banco</button></div>
+                        <div id="bank-content" class="tab-content active"><div id="bank-loans-list" class="card-container"></div><div id="bank-active-loans"></div></div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="assign-flight-modal" class="modal"><div class="modal-content"><span class="close-button">&times;</span><h2>Atribuir Voo</h2><div id="assign-flight-requirements"></div><p>Selecione um avião ocioso para a rota <strong id="modal-route-name"></strong>:</p><div id="modal-available-planes"></div></div></div>
+    <div id="assign-route-modal" class="modal"><div class="modal-content"><span class="close-button">&times;</span><h2>Selecionar Rota para <strong id="modal-plane-name"></strong></h2><p>Este avião tem alcance para as seguintes rotas desbloqueadas:</p><div id="modal-available-routes" class="card-container-modal"></div></div></div>
+    <div id="finance-report-modal" class="modal"><div class="modal-content large"><span class="close-button">&times;</span><h2>Relatório Financeiro</h2><div id="finance-report-content" class="finance-grid"></div></div></div>
+    <div id="confirmation-modal" class="modal"><div class="modal-content"><h2 id="confirm-title">Você tem certeza?</h2><p id="confirm-message">Esta ação não pode ser desfeita.</p><div class="confirm-buttons"><button id="confirm-no-btn" class="btn btn-restart">Cancelar</button><button id="confirm-yes-btn" class="btn btn-save">Confirmar</button></div></div></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

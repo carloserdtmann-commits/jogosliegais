@@ -1,0 +1,323 @@
+/* --- Reset Básico e Configurações Globais --- */
+:root {
+    --primary-bg: #0d1117;
+    --secondary-bg: #161b22;
+    --card-bg: #21262d;
+    --border-color: #30363d;
+    --text-color: #c9d1d9;
+    --text-muted: #8b949e;
+    --accent-blue: #58a6ff;
+    --accent-green: #56d364;
+    --accent-red: #f85149;
+    --accent-yellow: #f0a202;
+    --accent-purple: #a371f7;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --font-family: 'Poppins', sans-serif;
+    --navbar-width: 250px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.game-wrapper {
+    display: flex;
+}
+
+/* --- BARRA DE NAVEGAÇÃO LATERAL --- */
+.side-navbar {
+    width: var(--navbar-width);
+    height: 100vh;
+    background-color: var(--secondary-bg);
+    border-right: 1px solid var(--border-color);
+    transition: width 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar-header {
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+.logo-text {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    padding: 0 1rem;
+    word-break: break-word;
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin: 0.5rem 0;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+    white-space: nowrap;
+}
+
+.nav-link:hover {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+.nav-link.active {
+    background-color: var(--accent-blue);
+    color: var(--primary-bg);
+    font-weight: 600;
+}
+
+.nav-icon {
+    font-size: 1.5rem;
+    width: 50px;
+    text-align: center;
+}
+
+.nav-text {
+    margin-left: 1rem;
+}
+
+/* --- CONTEÚDO PRINCIPAL --- */
+.main-content {
+    margin-left: var(--navbar-width);
+    width: calc(100% - var(--navbar-width));
+    transition: margin-left 0.3s, width 0.3s;
+    padding: 2rem;
+}
+
+header {
+    background: var(--card-bg);
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+.header-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+header h1 {
+    margin: 0;
+    color: var(--text-color);
+    font-weight: 600;
+    text-align: left;
+}
+
+.dashboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.status-box {
+    background: var(--secondary-bg);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 1.1em;
+    min-width: 220px;
+    text-align: center;
+}
+
+.status-box strong {
+    color: var(--accent-blue);
+}
+
+/* --- PAINEL DE NOTÍCIAS --- */
+.news-ticker {
+    background-color: var(--secondary-bg);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    flex-grow: 1;
+    margin-left: 2rem;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    color: var(--text-muted);
+}
+
+#news-ticker-text {
+    display: inline-block;
+    animation: ticker-scroll 20s linear infinite;
+    padding-left: 100%;
+}
+
+@keyframes ticker-scroll {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+
+/* --- SISTEMA DE PÁGINAS --- */
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.5s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.page h2 {
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+}
+
+.icon { margin-right: 0.75rem; font-size: 1.4em; }
+.overview-grid { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: min-content; gap: 2rem; }
+.game-panel { background-color: var(--secondary-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 1.5rem; }
+.game-panel.full-width { grid-column: 1 / -1; }
+
+.operations-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+/* --- Abas, Cards, Botões, etc. --- */
+.tabs { display: flex; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+.tab-button { background: none; border: none; color: var(--text-muted); padding: 0.5rem 1rem; cursor: pointer; font-size: 1em; font-family: var(--font-family); border-bottom: 3px solid transparent; transition: all 0.2s ease; }
+.tab-button:hover { color: var(--text-color); }
+.tab-button.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.card-container { display: flex; flex-direction: column; gap: 1rem; max-height: calc(100vh - 450px); overflow-y: auto; padding-right: 10px; }
+.card-container-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+.overview-grid .card-container { max-height: 250px; }
+
+.card { background-color: var(--card-bg); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column; }
+.card > h3 { margin-bottom: 0.5rem; }
+.card > p { color: var(--text-muted); font-size: 0.9em; flex-grow: 1; }
+.card .price { margin-top: 1rem; }
+.card-details { font-size: 0.9em; color: var(--text-muted); margin-bottom: 0.8rem; }
+.price { color: var(--accent-green); font-weight: 600; }
+.cost { color: var(--accent-red); }
+
+.btn { background-color: var(--accent-blue); color: var(--primary-bg); border: none; padding: 0.7rem 1.2rem; border-radius: 6px; cursor: pointer; font-weight: 600; font-family: var(--font-family); transition: background-color 0.2s; width: 100%; text-align: center; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: auto; }
+.btn:hover { background-color: #79c0ff; }
+.btn:disabled { background-color: #555; cursor: not-allowed; color: #aaa; }
+.btn-save { background-color: var(--accent-green); }
+.btn-save:hover { background-color: #6ee77a; }
+.btn-restart { background-color: var(--accent-red); }
+.btn-restart:hover { background-color: #ff6b63; }
+.btn-assign { background-color: var(--accent-purple); margin-top: 0.5rem; }
+.btn-assign:hover { background-color: #b58ef9; }
+.header-btn { margin-bottom: 1rem; }
+
+.status { font-weight: bold; padding: 0.2rem 0.5rem; border-radius: 4px; text-align: center; margin-top: 0.5rem; font-size: 0.8em; }
+.status-idle { background-color: var(--accent-green); color: var(--primary-bg); }
+.status-flying { background-color: #e3b341; color: var(--primary-bg); }
+.status-maintenance { background-color: var(--accent-yellow); color: var(--primary-bg); }
+.progress-bar-container { background-color: var(--border-color); border-radius: 10px; height: 6px; margin-top: 8px; overflow: hidden; }
+.progress-bar { background-color: var(--accent-blue); height: 100%; width: 0%; border-radius: 10px; transition: width 0.5s linear; }
+
+#log-messages { max-height: 200px; overflow-y: auto; }
+#log-messages p { padding: 0.5rem; margin-bottom: 0.5rem; border-radius: 4px; font-size: 0.9em; border-left: 3px solid var(--accent-blue); background-color: var(--primary-bg); }
+#log-messages p.success { border-left-color: var(--accent-green); }
+#log-messages p.error { border-left-color: var(--accent-red); }
+#log-messages p.warning { border-left-color: var(--accent-yellow); }
+.card .btn.market-btn { background-color: var(--accent-yellow); margin-top: 8px; }
+.card .btn.market-btn:hover { background-color: #ffc107; }
+.marketing-active-indicator { color: var(--accent-yellow); font-weight: 600; font-size: 0.8em; text-align: center; margin-top: 8px; }
+
+/* --- Precificação e Satisfação --- */
+.pricing-controls { display: flex; align-items: center; justify-content: space-between; margin: 0.5rem 0; }
+.pricing-controls button { background: var(--border-color); border: none; color: var(--text-color); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; line-height: 30px; }
+.pricing-controls span { font-size: 1.2rem; font-weight: 600; }
+.satisfaction-bar-container { margin-top: 0.5rem; }
+.satisfaction-bar-container label { font-size: 0.8em; color: var(--text-muted); display: block; margin-bottom: 4px; }
+.satisfaction-bar { background-color: var(--accent-red); width: 100%; height: 8px; border-radius: 4px; transition: width 0.5s; }
+.satisfaction-bar.medium { background-color: var(--accent-yellow); }
+.satisfaction-bar.high { background-color: var(--accent-green); }
+.card.event-positive { border-left: 5px solid var(--accent-green); }
+.card.event-negative { border-left: 5px solid var(--accent-red); }
+
+/* --- Ações do Jogo e Menu Principal --- */
+.game-actions { display: flex; gap: 1rem; }
+.main-menu-buttons { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
+
+/* --- Modal & Finanças --- */
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px); justify-content: center; align-items: center; }
+.modal-content { background-color: var(--secondary-bg); padding: 2rem; border: 1px solid var(--border-color); width: 90%; max-width: 500px; border-radius: 12px; position: relative; box-shadow: 0 8px 30px var(--shadow-color); }
+.modal-content.large { max-width: 800px; }
+.close-button { color: #aaa; position: absolute; top: 1rem; right: 1.5rem; font-size: 28px; font-weight: bold; cursor: pointer; }
+.finance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+#company-name-input { width: 100%; padding: 0.8rem; margin: 1rem 0; background: var(--primary-bg); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 6px; font-size: 1rem; }
+#bank-active-loans h4 { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
+.loan-item { display: flex; justify-content: space-between; padding: 0.5rem; background-color: var(--primary-bg); border-radius: 4px; margin-top: 0.5rem; }
+.finance-section h3 { color: var(--accent-blue); border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1rem; }
+.finance-item { display: flex; justify-content: space-between; font-size: 1.1em; padding: 0.5rem 0; }
+.finance-item .value.positive { color: var(--accent-green); }
+.finance-item .value.negative { color: var(--accent-red); }
+.finance-total { grid-column: 1 / -1; border-top: 2px solid var(--border-color); margin-top: 1rem; padding-top: 1rem; font-size: 1.5em; font-weight: 700; }
+.card-container-modal { max-height: 40vh; overflow-y: auto; padding-right: 10px; }
+.route-option { padding: 0.8rem; background-color: var(--card-bg); margin-top: 0.5rem; border-radius: 4px; cursor: pointer; transition: background-color 0.2s; border: 1px solid var(--border-color); }
+.route-option:hover { background-color: var(--accent-purple); color: var(--primary-bg); }
+.route-option-details { font-size: 0.8em; opacity: 0.7; margin-top: 4px; }
+.confirm-buttons { display: flex; gap: 1rem; margin-top: 1.5rem; }
+#assign-flight-requirements { background: var(--primary-bg); padding: 0.5rem 1rem; margin-bottom: 1rem; border-radius: 6px; border: 1px solid var(--border-color); font-size: 0.9em; }
+
+/* --- Tabelas (Histórico de Voos) --- */
+.table-container { max-height: calc(100vh - 350px); overflow-y: auto; }
+.styled-table { width: 100%; border-collapse: collapse; }
+.styled-table th, .styled-table td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); text-align: left; }
+.styled-table thead th { background-color: var(--card-bg); color: var(--accent-blue); font-weight: 600; position: sticky; top: 0; }
+.styled-table tbody tr:hover { background-color: var(--card-bg); }
+.profit-positive { color: var(--accent-green); }
+.profit-negative { color: var(--accent-red); }
+
+/* --- Pessoal & Upgrades --- */
+.staff-summary { padding: 1rem; background: var(--card-bg); border-radius: 8px; margin-bottom: 1rem; text-align: center; display: flex; justify-content: space-around; flex-wrap: wrap; }
+.staff-summary span { margin: 0 1rem; font-size: 1.1em; }
+
+/* --- Concorrência --- */
+.competitor-routes { font-size: 0.8em; color: var(--text-muted); margin-top: 0.5rem; }
+.route-competition { margin-top: 1rem; font-size: 0.9em; }
+.route-competition-header { font-weight: 600; color: var(--text-muted); }
+.competitors-on-route { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.25rem; flex-wrap: wrap; }
+.competitor-tag { background-color: var(--border-color); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8em; }
+.competitor-tag.player { background-color: var(--accent-blue); color: var(--primary-bg); }
+
+/* --- Alianças --- */
+#alliance-info { padding: 1rem; background-color: var(--card-bg); border-radius: 8px; margin-bottom: 2rem; text-align: center; border: 1px solid var(--border-color); }
+#alliance-info.in-alliance { border-left: 5px solid var(--accent-green); }
+#alliance-info p { margin: 0; }
+#alliance-info strong { color: var(--accent-green); }
+.card ul { list-style: none; padding-left: 0; margin-top: 0.5rem; }
+.card ul li { padding-left: 1em; text-indent: -1em; }
+.card ul li:before { content: "✓"; color: var(--accent-green); margin-right: 0.5em; }
